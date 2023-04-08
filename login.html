@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login validation</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+   <h1 class="text-center text-primary my-4">Login Form</h1> 
+   <div class="container">
+    <div class="row">
+      <div class="col-md-8 mx-auto">
+        <div class="card">
+          <div class="card-body">
+            <form>
+              <div class="mb-3 mt-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+              </div>
+              <div class="mb-3">
+                <label for="pwd" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+              </div>
+              <div class="form-check mb-3">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" name="remember"> Remember me
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary" id="btn">Login</button>
+              <p id="err"></p>
+              <p class="mt-3 text-center"><a href="register-2.html" class=" text-decoration-none ">Dont have an account?</a></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+   </div>
+
+   <script>                                                                                                                                                         
+     document.getElementById("btn").addEventListener("click", (event)=>{
+            event.preventDefault();
+     let email=document.getElementById("email").value;
+     let pwd=document.getElementById("pwd").value
+
+    if(email.length===0)
+    {
+        document.getElementById("err").innerHTML="<b class='text-danger'>ENTER EMAIL</b>" 
+    }
+    else if(pwd.length===0){
+      document.getElementById("err").innerHTML="<b class='text-danger'>Enter Password</b>" 
+    }
+    else{
+       // document.getElementById("err").innerHTML="<b class='text-success'>Success All Details Submited</b>"  
+      const data=new FormData()
+      data.append("userEmail",email)
+      data.append("userPassword",pwd)
+      
+      let api=new XMLHttpRequest();
+      api.open("POST", "http://ilandertech.com/api/index.php/Welcome/StuLogin",true);
+      api.send(data)
+      console.log(api)
+      api.onreadystatechange=function(){
+        if(api.readyState===4 && api.status===200){
+          console.log(api.response)
+          console.log(JSON.parse(api.response))
+          let result=JSON.parse(api.response)
+          document.getElementById("err").innerHTML=result.message;
+          if(result.status===1){
+            document.getElementById("err").style.color="green";
+            localStorage.setItem("email",email);
+            localStorage.setItem("data",JSON.stringify(result.data[0]))
+            setTimeout(()=>{window.location.assign("dashboard.html")},3000)//this is also callback function
+         }else{
+            document.getElementById("err").style.color="red" 
+          }
+        }
+      }
+    }
+
+  });
+
+   </script>
+</body>
+</html>
